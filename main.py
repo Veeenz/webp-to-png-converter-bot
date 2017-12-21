@@ -28,18 +28,18 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-TOKEN = "456882544:AAFROqKMzKfCMmralQ4mx-xqFGDo0THjDIc"
+TOKEN = ""
 PATH_DIRECTORY = "tmp"
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    update.message.reply_text('Hello dear. If you want to start send me a sticker and I will give you the png without touching the trasparency!')
 
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    update.message.reply_text('Send me a sticker!')
 
 def download_sticker(stickerId):
     url = 'https://api.telegram.org/bot{}/getFile?file_id={}'.format(TOKEN, stickerId)
