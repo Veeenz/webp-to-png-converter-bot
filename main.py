@@ -19,6 +19,8 @@ bot.
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
+import os
+import errno
 import uuid
 from PIL import Image
 import requests
@@ -30,8 +32,8 @@ logger = logging.getLogger(__name__)
 
 TOKEN = ""
 PATH_DIRECTORY = "tmp"
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
+
+
 def start(bot, update):
     """Send a message when the command /start is issued."""
     update.message.reply_text('Hello dear. If you want to start send me a sticker and I will give you the png without touching the trasparency!')
@@ -68,14 +70,16 @@ def convert_png(path):
     newPath = path.replace(".webp",".png")
     im.save(newPath, transparency=255)    
     return newPath
-def echo(bot, update):
-    """Echo the user message."""
+
+def stickers(bot, update):
+    update.message.reply_text('Well, let me do some nerdy operation 🤓')
     with open('random','w+') as opened:
         opened.write(str(update.message))
     result = download_sticker(update.message.sticker.file_id)
     if result['success']:
         image = convert_png(result['path'])
         bot.send_document(chat_id=update.message.chat.id, document=open(image, 'rb'))
+        bot.send_message(chat_id=update.message.chat.id, text='Yay, enjoy your sticker!')
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
@@ -84,11 +88,16 @@ def error(bot, update, error):
 
 def main():
     """Start the bot."""
+    try:
+        os.makedirs(PATH_DIRECTORY)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
     updater = Updater(TOKEN)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
-    dp.add_handler(MessageHandler(Filters.sticker, echo))
+    dp.add_handler(MessageHandler(Filters.sticker, stickers))
     dp.add_error_handler(error)
 
     # Start the Bot
