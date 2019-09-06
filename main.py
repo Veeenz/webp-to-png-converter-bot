@@ -43,6 +43,7 @@ def help(bot, update):
     """Send a message when the command /help is issued."""
     update.message.reply_text('Send me a sticker!')
 
+
 def download_sticker(stickerId):
     url = 'https://api.telegram.org/bot{}/getFile?file_id={}'.format(TOKEN, stickerId)
     logger.info(url)
@@ -73,13 +74,13 @@ def convert_png(path):
 
 def stickers(bot, update):
     update.message.reply_text('Well, let me do some nerdy operation 🤓')
-    with open('random','w+') as opened:
-        opened.write(str(update.message))
     result = download_sticker(update.message.sticker.file_id)
     if result['success']:
         image = convert_png(result['path'])
         bot.send_document(chat_id=update.message.chat.id, document=open(image, 'rb'))
-        bot.send_message(chat_id=update.message.chat.id, text='Yay, enjoy your sticker!')
+        bot.send_message(chat_id=update.message.chat.id, text='Here there is your sticker!\nThe associated emoji is {}!'.format(update.message.sticker.emoji))
+    else:
+        bot.send_mesage(chat_idupdate.message.chat.id, text='There was an error while processing your request... Try again!')
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
